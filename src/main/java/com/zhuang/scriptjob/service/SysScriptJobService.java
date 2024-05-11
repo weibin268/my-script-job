@@ -8,12 +8,11 @@ import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zhuang.scriptjob.config.ScriptJobProperties;
-import com.zhuang.scriptjob.entity.YdScriptJobLog;
-import com.zhuang.scriptjob.mapper.YdScriptJobMapper;
-import com.zhuang.scriptjob.entity.YdScriptJob;
+import com.zhuang.scriptjob.entity.SysScriptJobLog;
+import com.zhuang.scriptjob.mapper.SysScriptJobMapper;
+import com.zhuang.scriptjob.entity.SysScriptJob;
 import com.zhuang.scriptjob.util.JsEngineUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +31,7 @@ import java.util.Map;
  */
 @Slf4j
 @Service
-public class YdScriptJobService extends ServiceImpl<YdScriptJobMapper, YdScriptJob> {
+public class SysScriptJobService extends ServiceImpl<SysScriptJobMapper, SysScriptJob> {
 
     public static final String TASK_ID_PREFIX = "script_";
     @Autowired
@@ -40,16 +39,16 @@ public class YdScriptJobService extends ServiceImpl<YdScriptJobMapper, YdScriptJ
     @Autowired
     private ScriptJobProperties scriptJobProperties;
     @Autowired
-    private YdScriptJobLogService ydScriptJobLogService;
+    private SysScriptJobLogService sysScriptJobLogService;
 
     /**
      * 获取已启用的脚本任务列表
      *
      * @return
      */
-    public List<YdScriptJob> getEnabledList() {
-        return list(new LambdaQueryWrapper<YdScriptJob>()
-                .eq(YdScriptJob::getStatus, 1)
+    public List<SysScriptJob> getEnabledList() {
+        return list(new LambdaQueryWrapper<SysScriptJob>()
+                .eq(SysScriptJob::getStatus, 1)
         );
     }
 
@@ -78,12 +77,12 @@ public class YdScriptJobService extends ServiceImpl<YdScriptJobMapper, YdScriptJ
             CronUtil.start();
         }
         // 添加任务调度
-        List<YdScriptJob> ydScriptJobList = getEnabledList();
+        List<SysScriptJob> sysScriptJobList = getEnabledList();
         // 获取脚本上下文
         Map<String, Object> context = getScriptContext();
-        for (YdScriptJob ydScriptJob : ydScriptJobList) {
-            CronUtil.schedule(TASK_ID_PREFIX + ydScriptJob.getId(), ydScriptJob.getCron(), () -> {
-                execute(ydScriptJob, context);
+        for (SysScriptJob sysScriptJob : sysScriptJobList) {
+            CronUtil.schedule(TASK_ID_PREFIX + sysScriptJob.getId(), sysScriptJob.getCron(), () -> {
+                execute(sysScriptJob, context);
             });
         }
     }
@@ -93,41 +92,41 @@ public class YdScriptJobService extends ServiceImpl<YdScriptJobMapper, YdScriptJ
      *
      * @param id
      */
-    public YdScriptJobLog execute(String id) {
-        YdScriptJob ydScriptJob = getById(id);
+    public SysScriptJobLog execute(String id) {
+        SysScriptJob sysScriptJob = getById(id);
         Map<String, Object> context = getScriptContext();
-        YdScriptJobLog ydScriptJobLog = execute(ydScriptJob, context);
-        return ydScriptJobLog;
+        SysScriptJobLog sysScriptJobLog = execute(sysScriptJob, context);
+        return sysScriptJobLog;
     }
 
     /**
      * 执行脚本任务
      *
-     * @param ydScriptJob
+     * @param sysScriptJob
      * @param context
      */
-    public YdScriptJobLog execute(YdScriptJob ydScriptJob, Map<String, Object> context) {
-        YdScriptJobLog ydScriptJobLog = new YdScriptJobLog();
-        ydScriptJobLog.setJobId(ydScriptJob.getId());
-        ydScriptJobLog.setJobName(ydScriptJob.getName());
+    public SysScriptJobLog execute(SysScriptJob sysScriptJob, Map<String, Object> context) {
+        SysScriptJobLog sysScriptJobLog = new SysScriptJobLog();
+        sysScriptJobLog.setJobId(sysScriptJob.getId());
+        sysScriptJobLog.setJobName(sysScriptJob.getName());
         long startTime = System.currentTimeMillis();
         try {
             // 执行脚本
-            Object result = JsEngineUtils.eval(ydScriptJob.getScript(), context, true);
+            Object result = JsEngineUtils.eval(sysScriptJob.getScript(), context, true);
             String jsonResult = JSONUtil.toJsonStr(result);
-            ydScriptJobLog.setExecutionCode(0);
-            ydScriptJobLog.setExecutionMessage(truncateExecutionMessage(jsonResult));
+            sysScriptJobLog.setExecutionCode(0);
+            sysScriptJobLog.setExecutionMessage(truncateExecutionMessage(jsonResult));
         } catch (Exception ex) {
-            ydScriptJobLog.setExecutionCode(1);
-            ydScriptJobLog.setExecutionMessage(truncateExecutionMessage(ExceptionUtil.stacktraceToString(ex)));
-            log.error("script job execute fail! -> jobId={}, jobName={}, script={}", ydScriptJob.getId(), ydScriptJob.getName(), ydScriptJob.getScript(), ex);
+            sysScriptJobLog.setExecutionCode(1);
+            sysScriptJobLog.setExecutionMessage(truncateExecutionMessage(ExceptionUtil.stacktraceToString(ex)));
+            log.error("script job execute fail! -> jobId={}, jobName={}, script={}", sysScriptJob.getId(), sysScriptJob.getName(), sysScriptJob.getScript(), ex);
         }
         Long executionTime = System.currentTimeMillis() - startTime;
-        ydScriptJobLog.setCreateTime(new Date());
-        ydScriptJobLog.setExecutionTime(executionTime.intValue());
+        sysScriptJobLog.setCreateTime(new Date());
+        sysScriptJobLog.setExecutionTime(executionTime.intValue());
         // 记录日志
-        ydScriptJobLogService.save(ydScriptJobLog);
-        return ydScriptJobLog;
+        sysScriptJobLogService.save(sysScriptJobLog);
+        return sysScriptJobLog;
     }
 
     /**

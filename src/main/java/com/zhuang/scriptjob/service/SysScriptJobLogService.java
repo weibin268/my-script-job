@@ -1,8 +1,8 @@
 package com.zhuang.scriptjob.service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.zhuang.scriptjob.mapper.YdScriptJobLogMapper;
-import com.zhuang.scriptjob.entity.YdScriptJobLog;
+import com.zhuang.scriptjob.mapper.SysScriptJobLogMapper;
+import com.zhuang.scriptjob.entity.SysScriptJobLog;
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,6 +14,6 @@ import org.springframework.stereotype.Service;
  * @since 2024-05-11
  */
 @Service
-public class YdScriptJobLogService extends ServiceImpl<YdScriptJobLogMapper, YdScriptJobLog> {
+public class SysScriptJobLogService extends ServiceImpl<SysScriptJobLogMapper, SysScriptJobLog> {
 
 }

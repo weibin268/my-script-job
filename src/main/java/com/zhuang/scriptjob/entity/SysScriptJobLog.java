@@ -20,9 +20,9 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@TableName("yd_script_job_log")
-@ApiModel(value = "YdScriptJobLog对象", description = "脚本任务日志")
-public class YdScriptJobLog implements Serializable {
+@TableName("sys_script_job_log")
+@ApiModel(value = "SysScriptJobLog对象", description = "脚本任务日志")
+public class SysScriptJobLog implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

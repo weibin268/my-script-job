@@ -18,9 +18,9 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@TableName("yd_script_job")
-@ApiModel(value = "YdScriptJob对象", description = "脚本任务")
-public class YdScriptJob implements Serializable {
+@TableName("sys_script_job")
+@ApiModel(value = "SysScriptJob对象", description = "脚本任务")
+public class SysScriptJob implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

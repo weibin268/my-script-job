@@ -14,7 +14,7 @@ import org.springframework.stereotype.Controller;
  * @since 2024-05-11
  */
 @Controller
-@RequestMapping("/scriptJob")
-public class YdScriptJobController {
+@RequestMapping("scriptJob")
+public class SysScriptJobController {
 
 }
