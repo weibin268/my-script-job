@@ -1,0 +1,1 @@
+INSERT INTO `upms`.`sys_openapi_user` (`id`, `username`, `password`, `remark`, `status`, `create_time`, `create_by`, `modify_time`, `modify_by`) VALUES ('test01', 'test01', '123456', 'test01', 1, getdate(), NULL, NULL, NULL);
